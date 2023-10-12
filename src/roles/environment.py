@@ -2,6 +2,7 @@ import random
 from matplotlib import pyplot as plt
 from PIL import Image
 from src.roles.grass import Grass
+from src.roles.dead_grass import DeadGrass
 from src.roles.sheep import Sheep
 from src.roles.wolf import Wolf
 
@@ -14,7 +15,7 @@ class Environment:
                  wolf_population: int, 
                  sheep_reproduction_probability: float = 0.25, sheep_movement_probability: float = 0.75, sheep_hunted_probability: float = 0.75,
                  wolf_reproduction_probability: float = 0.25, wolf_hunt_probability: float = 0.75,
-                 init_dead_grass_proportion: int = 0.1, grass_growth_probability: float = 0.25,
+                 init_dead_grass_proportion: int = 0.10, grass_growth_probability: float = 0.10,
                  ):
         """
         Initializes the environment with a specified grid side and initial counts for sheep and wolves.
@@ -31,9 +32,10 @@ class Environment:
         self.wolf_reproduction_probability = wolf_reproduction_probability
         self.wolf_hunt_probability = wolf_hunt_probability
         
+        self.grass_population = (1 - init_dead_grass_proportion) * (grid_size * grid_size - (sheep_population + wolf_population))
+
+        self.dead_grass_population = init_dead_grass_proportion * (grid_size * grid_size - (sheep_population + wolf_population))
         self.growth_probability = grass_growth_probability
-        self.grass_patches = (1 - init_dead_grass_proportion) * (grid_size * grid_size - (sheep_population + wolf_population))
-        self.dead_grass_patches = init_dead_grass_proportion * (grid_size * grid_size - (sheep_population + wolf_population))
         
         self._randomly_assign_positions()
     
@@ -51,34 +53,35 @@ class Environment:
         for idx, position in enumerate(positions):
             i, j = position
             if idx < self.sheep_population:
-                self.grid[i][j] = Sheep(i, j)
+                self.grid[i][j] = Sheep(i, j, self)
             elif idx < self.sheep_population + self.wolf_population:
-                self.grid[i][j] = Wolf(i, j)
-            elif idx < self.sheep_population + self.wolf_population + self.grass_patches:
-                self.grid[i][j] = Grass("Grass", i, j, self.growth_probability)
+                self.grid[i][j] = Wolf(i, j, self)
+            elif idx < self.sheep_population + self.wolf_population + self.grass_population:
+                self.grid[i][j] = Grass(i, j, self)
             else:
-                self.grid[i][j] = Grass("Dead Grass", i, j, self.growth_probability)
+                self.grid[i][j] = DeadGrass(i, j, self, self.growth_probability)
     
-    def plot_environment(self):
+    def plot_environment(self, step):
         """
         Plots the environment as a pixel map using PIL with a darker green color for grass and brown for dead grass.
-        """
-        color_map = {
-            "Grass": (0, 128, 0),  # Darker Green
-            "Sheep": (255, 255, 255),  # White
-            "Wolf": (0, 0, 0),   # Black
-            "Dead Grass": (139, 69, 19)  # Brown
-        }
-        
-        img_array = [[color_map[cell.status] for cell in row] for row in self.grid]
-        
+        """    
         img = Image.new('RGB', (self.grid_size, self.grid_size))
         pixels = img.load()
 
         for i in range(img.size[0]):
             for j in range(img.size[1]):
-                pixels[j, i] = img_array[i][j]
+                pixels[j, i] = self.grid[i][j].color
 
         plt.imshow(img)
         plt.axis('off')
-        plt.show()
+        plt.text(0, -5, f"Step: {step}", fontsize=12, color='black') 
+
+        # Position text relative to the figure size
+        plt.figtext(0.2, 0.02, f"Grass: {int(self.grass_population)}", fontsize=10, color='black')
+        plt.figtext(0.2, 0.05, f"Sheep: {int(self.sheep_population)}", fontsize=10, color='black')
+        plt.figtext(0.6, 0.02, f"Dead Grass: {int(self.dead_grass_population)}", fontsize=10, color='black')
+        plt.figtext(0.6, 0.05, f"Wolf: {int(self.wolf_population)}", fontsize=10, color='black')
+        
+        step = str(step).zfill(6)
+        plt.savefig(f"media/{step}.png")
+        plt.clf()

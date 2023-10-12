@@ -1,5 +1,5 @@
 class Entity:
-    def __init__(self, status: str, x: int, y: int):
-        self.status = status
+    def __init__(self, x: int, y: int, environment):
         self.x = x
         self.y = y
+        self.environment = environment
