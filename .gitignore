@@ -1,5 +1,5 @@
 # Extra
-env*
+env_mc/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
