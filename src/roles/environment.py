@@ -1,10 +1,7 @@
 import random
 from matplotlib import pyplot as plt
 from PIL import Image
-from src.roles.grass import Grass
-from src.roles.dead_grass import DeadGrass
-from src.roles.sheep import Sheep
-from src.roles.wolf import Wolf
+from src.roles.entities import Sheep, Wolf, Grass, DeadGrass
 
 class Environment:
     """

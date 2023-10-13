@@ -1,5 +1,4 @@
-from src.roles.dead_grass import DeadGrass
-from src.roles.sheep import Sheep
+from src.roles.entities import DeadGrass, Sheep, Wolf
 from src.utils.delete_images import delete_images
 from src.utils.generate_gif import generate_gif
 from src.utils.generate_plot import generate_plot
@@ -15,8 +14,9 @@ def simulation(environment, steps):
     sheep_population = []
     wolf_population = []
     for step in steps:
-        if step % ((steps[-1] - 1) // 10) == 0:
+        if step % ((steps[-1] - 1) // 50) == 0:
             print(f"Progress: {round(step / steps[-1],2) * 100}%")
+            environment.plot_environment(step)
         for i in range(environment.grid_size):
             for j in range(environment.grid_size):
                 entity = environment.grid[i][j]
@@ -24,7 +24,8 @@ def simulation(environment, steps):
                     entity.grow()
                 elif isinstance(entity, Sheep):
                     entity.update()
-        environment.plot_environment(step)
+                elif isinstance(entity, Wolf):
+                    entity.update()
         grass_population.append(environment.grass_population)
         dead_grass_population.append(environment.dead_grass_population)
         sheep_population.append(environment.sheep_population)
