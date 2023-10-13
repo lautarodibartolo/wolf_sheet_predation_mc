@@ -15,7 +15,7 @@ class Environment:
                  wolf_population: int, 
                  sheep_reproduction_probability: float = 0.25, sheep_movement_probability: float = 0.75, sheep_hunted_probability: float = 0.75,
                  wolf_reproduction_probability: float = 0.25, wolf_hunt_probability: float = 0.75,
-                 init_dead_grass_proportion: int = 0.10, grass_growth_probability: float = 0.10,
+                 init_dead_grass_proportion: int = 0.10, grass_growth_probability: float = 0.25,
                  ):
         """
         Initializes the environment with a specified grid side and initial counts for sheep and wolves.
@@ -74,13 +74,17 @@ class Environment:
 
         plt.imshow(img)
         plt.axis('off')
-        plt.text(0, -5, f"Step: {step}", fontsize=12, color='black') 
+        
+        plt.figtext(0.2, 0.9, f"Sheep Wolf Grass Simulation", fontsize=12, color='black') 
+        plt.figtext(0.7, 0.9, f"Step: {step}", fontsize=12, color='black') 
 
         # Position text relative to the figure size
         plt.figtext(0.2, 0.02, f"Grass: {int(self.grass_population)}", fontsize=10, color='black')
         plt.figtext(0.2, 0.05, f"Sheep: {int(self.sheep_population)}", fontsize=10, color='black')
         plt.figtext(0.6, 0.02, f"Dead Grass: {int(self.dead_grass_population)}", fontsize=10, color='black')
         plt.figtext(0.6, 0.05, f"Wolf: {int(self.wolf_population)}", fontsize=10, color='black')
+        total = self.grass_population + self.sheep_population + self.dead_grass_population + self.wolf_population
+        plt.figtext(0.4, 0.035, f"Total: {int(total)}", fontsize=10, color='black')
         
         step = str(step).zfill(6)
         plt.savefig(f"media/{step}.png")
