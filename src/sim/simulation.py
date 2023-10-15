@@ -26,6 +26,7 @@ def simulation(environment, steps):
                     entity.update()
                 elif isinstance(entity, Wolf):
                     entity.update()
+        environment.plot_environment(step)
         grass_population.append(environment.grass_population)
         dead_grass_population.append(environment.dead_grass_population)
         sheep_population.append(environment.sheep_population)
