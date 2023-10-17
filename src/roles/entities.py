@@ -117,7 +117,7 @@ class Sheep(Entity):
 class Wolf(Entity):
     def __init__(self, x: int, y: int, environment, 
                  age: int = 0, max_age: int = 100, 
-                 energy: int = 20, sheep_energy: int = 5, max_energy: int = 50,
+                 energy: int = 20, sheep_energy: int = 10, max_energy: int = 50,
                  reproduction_age: int = 5, reproduction_rate: float = 0.065,
                  movement_rate: float = 0.85,
                  hunting_success_rate: float = 0.65):
